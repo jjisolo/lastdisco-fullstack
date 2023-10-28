@@ -17,7 +17,12 @@ type PostgresStorage struct {
 // NewPostgresStorage function is reponsible for creating the storage
 // with PostgreSQL database as a backend driver.
 func NewPostgresStorage() (*PostgresStorage, error) {
-	connStr := "user=lastdisco_admin_db dbname=postgres password=Eequo2quAiBok9su sslmode=disable"
+	connStr := fmt.Sprintf(
+		"user=%s dbname=%s password=%s sslmode=disable",
+		deffs.PG_USER,
+		deffs.PG_NAME,
+		deffs.PG_PASS,
+	)
 
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {

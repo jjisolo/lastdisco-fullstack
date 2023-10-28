@@ -10,5 +10,11 @@ type Storage interface {
 	GetProductByID(int)                 (*types.Product, error)
 	GetProducts   ()                    ([]*types.Product, error)
 	UpdateProduct (*types.Product, int) error
+
+	CreateUser (*types.User)      error
+	DeleteUser (int)              error
+	GetUserByID(int)              (*types.User, error)
+	GetUsers   ()                 ([]*types.User, error)
+	UpdateUser (*types.User, int) error
 }
 

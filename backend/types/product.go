@@ -27,6 +27,7 @@ type Product struct {
 	UpdatedAt   time.Time `json:updatedAt`
 }
 
+// NewProduct function is creating the new product
 func NewProduct(shortName string, description string, count int, price string) *Product {
 	return &Product{
 		ShortName:   shortName,

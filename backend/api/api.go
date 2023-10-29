@@ -63,10 +63,11 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/product",      makeHttpHandleFunc(s.handleProduct))
 	router.HandleFunc("/product/{id}", makeHttpHandleFunc(s.handleProductByID))
 
-	router.HandleFunc("/user",      makeHttpHandleFunc(s.handleUser))
-	router.HandleFunc("/user/{id}", makeHttpHandleFunc(s.handleUserByID))
+	router.HandleFunc("/user",         makeHttpHandleFunc(s.handleUser))
+	router.HandleFunc("/user/{id}",    makeHttpHandleFunc(s.handleUserByID))
 
 	log.Println("JSON API server is now running on port: ", s.listenAddress)
+
 	http.ListenAndServe(s.listenAddress, router)
 }
 

@@ -42,6 +42,7 @@ func NewPostgresStorage() (*PostgresStorage, error) {
 // the database container.
 func (s *PostgresStorage) Initialize() error {
 	s.createProductTable()
+	s.createUserTable()
 	return nil
 }
 
@@ -51,7 +52,7 @@ func (s *PostgresStorage) createProductTable() error {
 	if deffs.TESTING {
 		log.Printf("DROP products table")
 
-		_, err := s.db.Exec("DROP TABLE product")
+		_, err := s.db.Exec("DROP TABLE IF EXISTS product")
 		if err != nil {
 			return err
 		}
@@ -79,18 +80,18 @@ func (s *PostgresStorage) createUserTable() error {
 	if deffs.TESTING {
 		log.Printf("DROP users table")
 
-		_, err := s.db.Exec("DROP TABLE user")
+		_, err := s.db.Exec("DROP TABLE IF EXISTS users")
 		if err != nil {
 			return err
 		}
 	}
 
-	query := `CREATE TABLE IF NOT EXISTS user(
-	id          SERIAL PRIMARY KEY
-	first_name  VARCHAR(75)
-	last_name   VARCHAR(75)
+	query := `CREATE TABLE IF NOT EXISTS users(
+	id          SERIAL PRIMARY KEY,
+	first_name  VARCHAR(75),
+	last_name   VARCHAR(75),
 	created_at  TIMESTAMP,
-	updated_at  TIMESTAMP,
+	updated_at  TIMESTAMP
 	)`
 
 	_, err := s.db.Exec(string(query))
@@ -127,7 +128,7 @@ func (s *PostgresStorage) CreateProduct(product *types.Product) error {
 func (s *PostgresStorage) CreateUser(user *types.User) error {
 	log.Printf("CREATE user")
 
-	query := `INSERT INTO user
+	query := `INSERT INTO users
 	(first_name, last_name, created_at, updated_at)
 	VALUES
 	($1, $2, $3, $4)`
@@ -177,7 +178,7 @@ func (s *PostgresStorage) UpdateProduct(product *types.Product, id int) error {
 func (s *PostgresStorage) UpdateUser(user *types.User, id int) error {
 	log.Printf("UPDATE user with id of %d", user.ID)
 
-	query := `UPDATE user 
+	query := `UPDATE users
 	SET
 		first_name = $1,
 		last_name = $2,
@@ -209,7 +210,7 @@ func (s *PostgresStorage) DeleteProduct(id int) error {
 func (s *PostgresStorage) DeleteUser(id int) error {
 	log.Printf("Request to DELETE user with id of %d", id)
 
-	query := "DELETE FROM user WHERE id = $1"
+	query := "DELETE FROM users WHERE id = $1"
 
 	_, err := s.db.Query(string(query), id)
 	return err
@@ -235,7 +236,7 @@ func (s *PostgresStorage) GetProductByID(id int) (*types.Product, error) {
 // GetUserByID function is reponsible for getting individual product from
 // the database using its unique identifier.
 func (s *PostgresStorage) GetUserByID(id int) (*types.User, error) {
-	query := "SELECT * FROM user WHERE id = $1"
+	query := "SELECT * FROM users WHERE id = $1"
 
 	rows, err := s.db.Query(string(query), id)
 	if err != nil {
@@ -274,7 +275,7 @@ func (s *PostgresStorage) GetProducts() ([]*types.Product, error) {
 // GetUsers function is responsible for retrieving all users,
 // that are located in the internal database.
 func (s *PostgresStorage) GetUsers() ([]*types.User, error) {
-	query := "SELECT * FROM user"
+	query := "SELECT * FROM users"
 
 	rows, err := s.db.Query(string(query))
 	if err != nil {

@@ -8,4 +8,3 @@ echo "Running watch tests"
 npm run test:watch
 
 docker-compose down
-sudo killall backend

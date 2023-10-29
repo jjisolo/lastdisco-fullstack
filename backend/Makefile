@@ -1,8 +1,8 @@
 prod:
-	@go build -o bin/lastdisco-backend -tags prod
+	@go build -o _bin/lastdisco-backend -tags prod
 
 test:
-	@go build -o bin/lastdisco-backend -tags test
+	@go build -o _bin/lastdisco-backend -tags test
 
 run:
-	@./bin/lastdisco-backend
+	@./_bin/lastdisco-backend

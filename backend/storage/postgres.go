@@ -90,6 +90,7 @@ func (s *PostgresStorage) createUserTable() error {
 	id          SERIAL PRIMARY KEY,
 	first_name  VARCHAR(75),
 	last_name   VARCHAR(75),
+	number      SERIAL,
 	created_at  TIMESTAMP,
 	updated_at  TIMESTAMP
 	)`
@@ -129,12 +130,13 @@ func (s *PostgresStorage) CreateUser(user *types.User) error {
 	log.Printf("CREATE user")
 
 	query := `INSERT INTO users
-	(first_name, last_name, created_at, updated_at)
+	(number, first_name, last_name, created_at, updated_at)
 	VALUES
-	($1, $2, $3, $4)`
+	($1, $2, $3, $4, $5)`
 
 	_, err := s.db.Query(
 		string(query),
+		user.Number,
 		user.FirstName,
 		user.LastName,
 		user.CreatedAt,
@@ -248,6 +250,21 @@ func (s *PostgresStorage) GetUserByID(id int) (*types.User, error) {
 	}
 
 	return nil, fmt.Errorf("user %d does not exist", id)
+}
+
+// GetUserByID function is reponsible for getting individual product from
+// the database using its number.
+func (s *PostgresStorage) GetUserByNumber(number int) (*types.User, error) {
+	rows, err := s.db.Query("SELECT * FROM USER WHERE NUMBER = $1", number)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		return readUserFromQuery(rows)
+	}
+
+	return nil, fmt.Errorf("user %d was not found", number)
 }
 
 // GetProducts function is responsible for retrieving all products,

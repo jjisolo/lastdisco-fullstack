@@ -1,6 +1,9 @@
 package types
 
-import "time"
+import (
+	"math/rand"
+	"time"
+)
 
 type CreateUserRequest struct {
 	FirstName   string    `json:firstName`
@@ -15,6 +18,7 @@ type UpdateUserRequest struct {
 
 type User struct {
 	ID          int       `json:id`
+	Number      int       `json:number`
 	FirstName   string    `json:firstName`
 	LastName    string    `json:lastName`
 	CreatedAt   time.Time `json:createdAt`
@@ -23,6 +27,7 @@ type User struct {
 
 func NewUser(firstName string, lastName string) *User {
 	return &User{
+		Number   : int(rand.Intn(10000000)),
 		FirstName: firstName,
 		LastName : lastName,
 		CreatedAt: time.Now().UTC(),

@@ -11,11 +11,18 @@ import (
 
 // handleUser serves the '/user' api enpoint, with allowed
 // GET and POST methods.
-func (s *APIServer) handleUser(w http.ResponseWriter, r *http.Request) error {
-	switch r.Method {
-	case "GET":
+func (s *APIServer) handleGetUser(w http.ResponseWriter, r *http.Request) error {
+	if r.Method == "GET" {
 		return s.handleGetUsers(w, r)
-	case "POST":
+	}
+
+	return fmt.Errorf("The requested method is not allowed at current endpoint")
+}
+
+// handleUser serves the '/user' api enpoint, with allowed
+// GET and POST methods.
+func (s *APIServer) handlePostUser(w http.ResponseWriter, r *http.Request) error {
+	if r.Method == "POST" {
 		return s.handleCreateUser(w, r)
 	}
 
@@ -84,6 +91,12 @@ func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) err
 		return err
 	}
 
+	tokenString, err := createJWT(user)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("JWT: ", tokenString)
 	return WriteJSON(w, http.StatusOK, user) 
 }
 

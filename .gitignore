@@ -1,4 +1,4 @@
 backend-tests/node_modules
 backend-tests/package-lock.json
-backend/bin
+backend/_bin
 git-crypt-key

@@ -87,11 +87,12 @@ func (s *PostgresStorage) createUserTable() error {
 	}
 
 	query := `CREATE TABLE IF NOT EXISTS users(
-	id          SERIAL PRIMARY KEY,
-	first_name  VARCHAR(75),
-	email       VARCHAR(100),
-	created_at  TIMESTAMP,
-	updated_at  TIMESTAMP
+	id                 SERIAL PRIMARY KEY,
+	first_name         VARCHAR(75),
+	password_encrypted VARCHAR(100)
+	email              VARCHAR(100),
+	created_at         TIMESTAMP,
+	updated_at         TIMESTAMP
 	)`
 
 	_, err := s.db.Exec(string(query))
@@ -129,14 +130,15 @@ func (s *PostgresStorage) CreateUser(user *types.User) error {
 	log.Printf("CREATE user")
 
 	query := `INSERT INTO users
-	(first_name, email, created_at, updated_at)
+	(first_name, email, password_encrypted, created_at, updated_at)
 	VALUES
-	($1, $2, $3, $4, $5)`
+	($1, $2, $3, $4, $5, $6)`
 
 	_, err := s.db.Query(
 		string(query),
 		user.FirstName,
 		user.Email,
+		user.EncryptedPasword,
 		user.CreatedAt,
 		user.UpdatedAt,
 	)
@@ -182,14 +184,16 @@ func (s *PostgresStorage) UpdateUser(user *types.User, id int) error {
 	SET
 		first_name = $1,
 		email = $2,
+		password_encrypted = $3
 		updated_at = NOW() 
-	WHERE id = $3;
+	WHERE id = $4;
 	`
 
 	_, err := s.db.Query(
 		string(query),
 		user.FirstName,
 		user.Email,
+		user.EncryptedPasword,
 		id,
 	)
 	return err
@@ -333,6 +337,7 @@ func readUserFromQuery(rows *sql.Rows) (*types.User, error) {
 		&user.ID,
 		&user.FirstName,
 		&user.Email,
+		&user.EncryptedPasword,
 		&user.CreatedAt, 
 		&user.UpdatedAt)
 

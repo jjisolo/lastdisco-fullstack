@@ -3,7 +3,6 @@ package api
 import (
 	"encoding/json"
 	"net/http"
-	"time"
 	"fmt"
 
 	"github.com/jjisolo/lastdisco-backend/types"
@@ -81,22 +80,15 @@ func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) err
 		return err
 	}
 
-	user := &types.User{
-		FirstName : userRequest.FirstName,
-		Email     : userRequest.Email,
-		UpdatedAt : time.Now().UTC(),
+	user, err := types.NewUser(userRequest.FirstName, userRequest.Email, userRequest.Password)
+	if err != nil {
+		return err
 	}
 
 	if err := s.storage.CreateUser(user); err != nil {
 		return err
 	}
 
-	tokenString, err := createJWT(user)
-	if err != nil {
-		return err
-	}
-
-	fmt.Println("JWT: ", tokenString)
 	return WriteJSON(w, http.StatusOK, user) 
 }
 
@@ -134,8 +126,12 @@ func (s *APIServer) handleUpdateUser(w http.ResponseWriter, r *http.Request) err
 		return err
 	}
 
-	user := types.NewUser(userRequest.FirstName, userRequest.LastName)
-	if err := s.storage.UpdateUser(user, id); err != nil {
+	user, err := types.NewUser(userRequest.FirstName, userRequest.Email, userRequest.Password)
+	if err != nil {
+		return err
+	}
+
+	if err = s.storage.UpdateUser(user, id); err != nil {
 		return err
 	}
 

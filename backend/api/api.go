@@ -71,7 +71,7 @@ func withJWTAuth(handlerFunc http.HandlerFunc, s storage.Storage) http.HandlerFu
 		}
 
 		claims := token.Claims.(jwt.MapClaims)
-		if user.Number != int(claims["accountNumber"].(float64)) {
+		if user.Email != claims["userEmail"] {
 			raisePermissionDenied(w)
 			return
 		}
@@ -89,8 +89,8 @@ func withJWTAuth(handlerFunc http.HandlerFunc, s storage.Storage) http.HandlerFu
 // JWT token.
 func createJWT(user *types.User) (string, error) {
 	claims := &jwt.MapClaims{
-		"expiresAt"    : 15000,
-		"accountNumber": user.Number,
+		"expiresAt": 15000,
+		"userEmail": user.Email,
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -138,6 +138,9 @@ func (s *APIServer) Run() {
 
 	router.HandleFunc("/product",      withJWTAuth(makeHttpHandleFunc(s.handleProduct),     s.storage))
 	router.HandleFunc("/product/{id}", withJWTAuth(makeHttpHandleFunc(s.handleProductByID), s.storage))
+
+	router.HandleFunc("/signin",       makeHttpHandleFunc(s.handleSignin))
+	router.HandleFunc("/signup",       makeHttpHandleFunc(s.handleSignup))
 
 	router.HandleFunc("/user/create",  makeHttpHandleFunc(s.handlePostUser))
 	router.HandleFunc("/user",         withJWTAuth(makeHttpHandleFunc(s.handlePostUser), s.storage))

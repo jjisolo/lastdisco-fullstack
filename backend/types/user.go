@@ -1,13 +1,12 @@
 package types
 
 import (
-	"math/rand"
 	"time"
 )
 
 type CreateUserRequest struct {
 	FirstName   string    `json:firstName`
-	LastName    string    `json:lastName`
+	Email       string    `json:lastName`
 }
 
 type UpdateUserRequest struct {
@@ -17,19 +16,18 @@ type UpdateUserRequest struct {
 }
 
 type User struct {
-	ID          int       `json:id`
-	Number      int       `json:number`
-	FirstName   string    `json:firstName`
-	LastName    string    `json:lastName`
-	CreatedAt   time.Time `json:createdAt`
-	UpdatedAt   time.Time `json:updatedAt`
+	ID               int       `json:id`
+	Email            string    `json:emailAddress`
+	FirstName        string    `json:firstName`
+	EncryptedPasword string    `json:-`
+	CreatedAt        time.Time `json:createdAt`
+	UpdatedAt        time.Time `json:updatedAt`
 }
 
-func NewUser(firstName string, lastName string) *User {
+func NewUser(firstName string, email string) *User {
 	return &User{
-		Number   : int(rand.Intn(10000000)),
+		Email    : email,
 		FirstName: firstName,
-		LastName : lastName,
 		CreatedAt: time.Now().UTC(),
 		UpdatedAt: time.Now().UTC(),
 	}

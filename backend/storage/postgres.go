@@ -89,8 +89,7 @@ func (s *PostgresStorage) createUserTable() error {
 	query := `CREATE TABLE IF NOT EXISTS users(
 	id          SERIAL PRIMARY KEY,
 	first_name  VARCHAR(75),
-	last_name   VARCHAR(75),
-	number      SERIAL,
+	email       VARCHAR(100),
 	created_at  TIMESTAMP,
 	updated_at  TIMESTAMP
 	)`
@@ -130,15 +129,14 @@ func (s *PostgresStorage) CreateUser(user *types.User) error {
 	log.Printf("CREATE user")
 
 	query := `INSERT INTO users
-	(number, first_name, last_name, created_at, updated_at)
+	(first_name, email, created_at, updated_at)
 	VALUES
 	($1, $2, $3, $4, $5)`
 
 	_, err := s.db.Query(
 		string(query),
-		user.Number,
 		user.FirstName,
-		user.LastName,
+		user.Email,
 		user.CreatedAt,
 		user.UpdatedAt,
 	)
@@ -183,7 +181,7 @@ func (s *PostgresStorage) UpdateUser(user *types.User, id int) error {
 	query := `UPDATE users
 	SET
 		first_name = $1,
-		last_name = $2,
+		email = $2,
 		updated_at = NOW() 
 	WHERE id = $3;
 	`
@@ -191,7 +189,7 @@ func (s *PostgresStorage) UpdateUser(user *types.User, id int) error {
 	_, err := s.db.Query(
 		string(query),
 		user.FirstName,
-		user.LastName,
+		user.Email,
 		id,
 	)
 	return err
@@ -254,8 +252,8 @@ func (s *PostgresStorage) GetUserByID(id int) (*types.User, error) {
 
 // GetUserByID function is reponsible for getting individual product from
 // the database using its number.
-func (s *PostgresStorage) GetUserByNumber(number int) (*types.User, error) {
-	rows, err := s.db.Query("SELECT * FROM USER WHERE NUMBER = $1", number)
+func (s *PostgresStorage) GetUserByEmail(email string) (*types.User, error) {
+	rows, err := s.db.Query("SELECT * FROM USER WHERE email = $1", email)
 	if err != nil {
 		return nil, err
 	}
@@ -264,7 +262,7 @@ func (s *PostgresStorage) GetUserByNumber(number int) (*types.User, error) {
 		return readUserFromQuery(rows)
 	}
 
-	return nil, fmt.Errorf("user %d was not found", number)
+	return nil, fmt.Errorf("user %d was not found", email)
 }
 
 // GetProducts function is responsible for retrieving all products,
@@ -334,7 +332,7 @@ func readUserFromQuery(rows *sql.Rows) (*types.User, error) {
 	err  := rows.Scan(
 		&user.ID,
 		&user.FirstName,
-		&user.LastName,
+		&user.Email,
 		&user.CreatedAt, 
 		&user.UpdatedAt)
 

@@ -83,7 +83,7 @@ func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) err
 
 	user := &types.User{
 		FirstName : userRequest.FirstName,
-		LastName  : userRequest.LastName,
+		Email     : userRequest.Email,
 		UpdatedAt : time.Now().UTC(),
 	}
 

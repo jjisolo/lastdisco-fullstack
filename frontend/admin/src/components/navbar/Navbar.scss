@@ -1,0 +1,69 @@
+.navbar {
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .logo {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    gap: 5px;
+
+    img {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  .nameMain {
+    font-weight: bold;
+    font-size: 29px;
+
+    .sp-1 {
+      color: #8884d8;
+    }
+
+    .sp-2 {
+      color: white;
+    }
+  }
+
+  .icons {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    .notification {
+      position: relative;
+
+      span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: red;
+        color: white;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        position: absolute;
+        top: -10px;
+        right: -10px;
+      }
+    }
+
+    .user {
+       gap: 10px;
+       display: flex;
+       align-items: center;
+
+    img {
+       width: 26px;
+       height: 26px;
+       border-radius: 50%;
+       object-fit: cover;
+    }
+   }
+  }
+}

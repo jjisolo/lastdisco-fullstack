@@ -1,11 +1,11 @@
-package api
+package rest
 
-import(
+import (
 	"encoding/json"
-	"net/http"
 	"fmt"
+	"net/http"
 
-	"github.com/jjisolo/lastdisco-backend/types"
+	"github.com/jjisolo/lastdisco-backend/internal/types"
 )
 
 func (s *APIServer) handleSignin(w http.ResponseWriter, r *http.Request) error {
@@ -24,7 +24,7 @@ func (s *APIServer) handleSignin(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	if !user.HasValidPassword(req.Password) {
-		return fmt.Errorf("not authenticated")
+		return fmt.Errorf("invalid username or password")
 	}
 
 	token, err := createJWT(user)
@@ -38,8 +38,4 @@ func (s *APIServer) handleSignin(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	return WriteJSON(w, http.StatusOK, res)
-}
-
-func (s *APIServer) handleSignup(w http.ResponseWriter, r *http.Request) error {
-	return nil
 }

@@ -16,7 +16,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	jwt "github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 // APIError represents the error that can be raised by the API server.
